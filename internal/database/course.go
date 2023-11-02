@@ -36,3 +36,22 @@ func (c *Course) Create(name, description, categoryID string) (Course, error) {
 		CategoryID:  categoryID,
 	}, nil
 }
+
+func (c *Course) List() ([]Course, error) {
+	rows, err := c.db.Query("SELECT * FROM courses")
+	if err != nil {
+		return []Course{}, err
+	}
+	defer rows.Close()
+
+	var courses []Course
+	for rows.Next() {
+		var course Course
+
+		rows.Scan(&course.ID, &course.Name, &course.Description, &course.CategoryID)
+
+		courses = append(courses, course)
+	}
+
+	return courses, nil
+}
