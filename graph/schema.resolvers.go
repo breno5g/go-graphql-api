@@ -13,7 +13,21 @@ import (
 
 // Courses is the resolver for the courses field.
 func (r *categoryResolver) Courses(ctx context.Context, obj *model.Category) ([]*model.Course, error) {
-	panic(fmt.Errorf("not implemented: Courses - courses"))
+	courses, err := r.CourseDB.FindByCategoryId(obj.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	var gqlCourses []*model.Course
+	for _, course := range courses {
+		gqlCourses = append(gqlCourses, &model.Course{
+			ID:          course.ID,
+			Name:        course.Name,
+			Description: &course.Description,
+		})
+	}
+
+	return gqlCourses, nil
 }
 
 // Category is the resolver for the category field.
